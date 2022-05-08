@@ -1,9 +1,24 @@
-FROM python:3.10
-RUN pip install pipenv
-ENV PYTHONUMBUFFERED 1
-WORKDIR /app
-COPY Pipfile /app/Pipfile
-RUN pipenv install --system --deploy
-COPY . /app
+# base image  
+FROM python:3.12.0a3-bullseye
+# setup environment variable  
+ENV DockerHOME=/home/app/webapp  
 
-CMD python manage.py runserver 0.0.0.0:8080
+# set work directory  
+RUN mkdir -p $DockerHOME  
+
+# where your code lives  
+WORKDIR $DockerHOME  
+
+# set environment variables  
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1  
+
+# install dependencies  
+RUN pip install --upgrade pip  
+
+# copy whole project to your docker home directory. 
+COPY . $DockerHOME  
+# run this command to install all dependencies  
+RUN pip install -r requirements.txt  
+# port where the Django app runs  
+CMD python manage.py runserver 0.0.0.0:8001
