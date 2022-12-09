@@ -1,10 +1,82 @@
-version: '3.10'
-services:
-  backend:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 8000:8000
-    volumes:
-      - .:/app
+# version: '3.10'
+# services:
+#   ticket_app:
+#     container_name: ticket_system
+#     build: 
+#       context: .
+#       dockerfile: Dockerfile
+#     environment:
+#       PIP_DISABLE_PIP_VERSION_CHECK: 1
+#     ports:
+#       - 8000:8000
+#     volumes:
+#       - .:/app
+#     depends_on:
+#       - mysql
+#   mysql:
+#       image: mysql:8.0.31
+#       volumes:
+#        - todo-mysql-data:/var/lib/mysql
+#       environment:
+#         MYSQL_ROOT_PASSWORD: secret
+#         MYSQL_DATABASE: todos
+      
+
+# volumes:
+#   todo-mysql-data:
+
+version: '3'
+volumes:
+    static_volume:
+    db:
+
+networks:
+    appnet:
+        driver: "bridge" 
+services: 
+    # nginx:
+    #     image: ticket_app
+    #     build: 
+    #         context: .
+    #         dockerfile: docker/prod/nginx/Dockerfile
+    #     ports: 
+    #         - 80:80
+    #     networks: 
+    #         - appnet
+    #     volumes: 
+    #         - ./static_files:/app/ticket_app/static_files
+    #     depends_on:
+    #         - mysql
+    #         - web
+    # mysql:
+    #     image: mysql:8.0
+    #     volumes:
+    #       - "db:/var/lib/mysql"
+    #     # restart: always
+    #     ports:
+    #       - 3310:3306
+    #     command: mysqld --default-authentication-plugin=mysql_native_password
+    #     environment:
+    #       MYSQL_ROOT_PASSWORD: addyourpassword
+    #       MYSQL_DATABASE: ticket_app
+    #       MYSQL_USER: addyouruser
+    #       MYSQL_PASSWORD: addyourpassword
+    #     networks: 
+    #         - appnet
+    web:
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        # image: hexakomb/ticket_app:latest
+        # command: gunicorn ticket_app.wsgi -b 0.0.0.0:8010 --reload
+        ports: 
+            - "8010:8010"
+        # depends_on:
+        #     - mysql
+        expose:
+            - 8010 
+        networks: 
+            - appnet
+        volumes: 
+            - static_volume:/static_files
+            - .:/app
