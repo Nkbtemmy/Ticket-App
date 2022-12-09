@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'APIs',
     'rest_framework',
     'drf_yasg',
-    'oauth2_provider',
     'corsheaders',
     
 ]
